@@ -74,9 +74,9 @@ WITH transfer AS (
         ORDER BY block_date -- <units of timeframe>
 ```
 
-This ca be done by a simple python script. 
+This can be done by a simple python script. 
 In addition , we can also manipulate the  topic so we can aggregate other types of events if need be.
-Currently outputs are stored as csv. we can load them directly into database like Hive.
+Currently outputs are stored as csv. In future, we can load them directly into database like Hive.
 
 
 ## API
@@ -87,8 +87,9 @@ For example,
 GET /most_transferred_tokens?timeframe=weekly
 ```
 The question becomes would we execute the aggregation for every call. 
-Obviously it would cause a huge on our compute resources.
+Obviously it would cause a huge load on our compute resources.
 Instead , we support few standard timeframes as in daily(1D) , weekly(1W) , monthly (1M).
-And generate data for them in different tables (regularly populated with batch pipelines based on their timeframe): e_most_trans_tok_d,  e_most_trans_tok_w,  e_most_trans_tok_m.
-Note that data of e_most_trans_tok_d cannot be used for e_most_trans_tok_w because most transferred token aggregations will have different values for daily and month.
-Similarly for monthly and yearly.
+And generate data for them in different tables : e_most_trans_tok_d,  e_most_trans_tok_w,  e_most_trans_tok_m.
+These tables would be populated regularly by batch pipelines.
+Note that data of e_most_trans_tok_d cannot be used for e_most_trans_tok_w because most transferred token aggregations will have different values for daily and weekly.
+Similarly for weekly and monthly.
