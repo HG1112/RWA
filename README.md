@@ -89,6 +89,6 @@ GET /most_transferred_tokens?timeframe=weekly
 The question becomes would we execute the aggregation for every call. 
 Obviously it would cause a huge on our compute resources.
 Instead , we support few standard timeframes as in daily(1D) , weekly(1W) , monthly (1M).
-And generate data for them in different tables : e_most_trans_tok_d,  e_most_trans_tok_w,  e_most_trans_tok_m.
+And generate data for them in different tables (regularly populated with batch pipelines based on their timeframe): e_most_trans_tok_d,  e_most_trans_tok_w,  e_most_trans_tok_m.
 Note that data of e_most_trans_tok_d cannot be used for e_most_trans_tok_w because most transferred token aggregations will have different values for daily and month.
 Similarly for monthly and yearly.
