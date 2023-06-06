@@ -61,37 +61,38 @@ def generate(sql_statement, file_path):
 
 # COMMAND ----------
 
-sql = """
-        WITH transfer AS (
-            SELECT 
-                month(e.block_date) as month_of_year,
-                weekofyear(e.block_date) as week_of_year, 
-                t.address, 
-                sum(cast(get_json_object(params, '$.value') as decimal(38,2))) as transfer_metric 
-            FROM ethereum_logs e
-            JOIN tokens t ON t.address = e.address
-            WHERE e.topic0 = '{}' 
-            AND year(e.block_date) = '2023' 
-            AND e.params like '%\"value\"%'
-            GROUP BY month(e.block_date), weekofyear(e.block_date), t.address
-        ),
-        ranked AS (
-            SELECT 
-                month_of_year, 
-                address, 
-                transfer_metric,
-                ROW_NUMBER() OVER (PARTITION BY week_of_year ORDER BY transfer_metric DESC) AS rn
-            FROM transfer
-        )
-        SELECT month_of_year, address, transfer_metric
-        FROM ranked
-        WHERE rn = 1 
-        ORDER BY month_of_year
-""".format(topic)
+def query_transfer_amount():
+    return """
+            WITH transfer AS (
+                SELECT 
+                    month(e.block_date) as month_of_year,
+                    weekofyear(e.block_date) as week_of_year, 
+                    t.address, 
+                    sum(cast(get_json_object(params, '$.value') as decimal(38,2))) as transfer_metric 
+                FROM ethereum_logs e
+                JOIN tokens t ON t.address = e.address
+                WHERE e.topic0 = '{}' 
+                AND year(e.block_date) = '2023' 
+                AND e.params like '%\"value\"%'
+                GROUP BY month(e.block_date), weekofyear(e.block_date), t.address
+            ),
+            ranked AS (
+                SELECT 
+                    month_of_year, 
+                    address, 
+                    transfer_metric,
+                    ROW_NUMBER() OVER (PARTITION BY week_of_year ORDER BY transfer_metric DESC) AS rn
+                FROM transfer
+            )
+            SELECT month_of_year, address, transfer_metric
+            FROM ranked
+            WHERE rn = 1 
+            ORDER BY month_of_year
+    """.format(topic)
 
 # COMMAND ----------
 
-generate(sql, 'output/sum.csv')
+generate(query_transfer_amount(), 'output/sum.csv')
 
 # COMMAND ----------
 
@@ -100,34 +101,35 @@ generate(sql, 'output/sum.csv')
 
 # COMMAND ----------
 
-sql = """
-        WITH transfer AS (
-            SELECT 
-                month(e.block_date) as month_of_year,
-                weekofyear(e.block_date) as week_of_year, 
-                t.address, 
-                count(1) as transfer_metric 
-            FROM ethereum_logs e
-            JOIN tokens t ON t.address = e.address
-            WHERE e.topic0 = '{}' 
-            AND year(e.block_date) = '2023' 
-            AND e.params like '%\"value\"%'
-            GROUP BY month(e.block_date), weekofyear(e.block_date), t.address
-        ),
-        ranked AS (
-            SELECT 
-                month_of_year, 
-                address, 
-                transfer_metric,
-                ROW_NUMBER() OVER (PARTITION BY week_of_year ORDER BY transfer_metric DESC) AS rn
-            FROM transfer
-        )
-        SELECT month_of_year, address, transfer_metric
-        FROM ranked
-        WHERE rn = 1 
-        ORDER BY month_of_year
-""".format(topic)
+def query_transfer_count():
+    return """
+            WITH transfer AS (
+                SELECT 
+                    month(e.block_date) as month_of_year,
+                    weekofyear(e.block_date) as week_of_year, 
+                    t.address, 
+                    count(1) as transfer_metric 
+                FROM ethereum_logs e
+                JOIN tokens t ON t.address = e.address
+                WHERE e.topic0 = '{}' 
+                AND year(e.block_date) = '2023' 
+                AND e.params like '%\"value\"%'
+                GROUP BY month(e.block_date), weekofyear(e.block_date), t.address
+            ),
+            ranked AS (
+                SELECT 
+                    month_of_year, 
+                    address, 
+                    transfer_metric,
+                    ROW_NUMBER() OVER (PARTITION BY week_of_year ORDER BY transfer_metric DESC) AS rn
+                FROM transfer
+            )
+            SELECT month_of_year, address, transfer_metric
+            FROM ranked
+            WHERE rn = 1 
+            ORDER BY month_of_year
+    """.format(topic)
 
 # COMMAND ----------
 
-generate(sql, 'output/count.csv')
+generate(query_transfer_count(), 'output/count.csv')
