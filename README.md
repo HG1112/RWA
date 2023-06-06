@@ -3,7 +3,7 @@ Solution to take home assigment of rwa.xyz
 
 ## Description
 Repo contents : 
-- RWA.ipynb : A Databricks Notebook with queries and functions necessary to generate data for most transferred ERC-20 token per week in 2023 based on transfer metrics (count of transfers / total amount transferred)
+- RWA.py : A Databricks Notebook with queries and functions necessary to generate data for most transferred ERC-20 token per week in 2023 based on transfer metrics (count of transfers / total amount transferred)
 - output : directory containing outputs from above notebook
 -  output/sum.csv : resultant data in csv with schema (month, token address, transfer metric),  based on transfer metric - total transferred amount 
 -  output/count.csv : resultant data in csv with schema (month, token address, transfer metric),  based on transfer metric - total number of transfers 
