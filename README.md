@@ -76,6 +76,7 @@ WITH transfer AS (
 
 This ca be done by a simple python script. 
 In addition , we can also manipulate the  topic so we can aggregate other types of events if need be.
+Currently outputs are stored as csv. we can load them directly into database like Hive.
 
 
 ## API
